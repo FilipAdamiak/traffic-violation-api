@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="twoHoursBefore" value="now() - interval 2 hour" dbms="h2"/>
+    <property name="threeHoursBefore" value="now() - interval 3 hour" dbms="h2"/>
+
+
+    <changeSet id="21062022-002" author="filip" runOnChange="true">
+
+        <insert tableName="person">
+            <column name="id" value="1"/>
+            <column name="name" value="Adam"/>
+            <column name="surname" value="Kowalski"/>
+            <column name="email" value="adas123@gmail.com"/>
+            <column name="version" value="0"/>
+            <column name="deleted" valueBoolean="false"/>
+            <column name="is_license_suspended" valueBoolean="false"/>
+            <column name="pesel" value="03262009610"/>
+        </insert>
+
+        <insert tableName="person">
+            <column name="id" value="2"/>
+            <column name="name" value="Agnieszka"/>
+            <column name="surname" value="Sobczak"/>
+            <column name="email" value="aga555@gmail.com"/>
+            <column name="version" value="0"/>
+            <column name="deleted" valueBoolean="false"/>
+            <column name="is_license_suspended" valueBoolean="true"/>
+            <column name="pesel" value="02252009610"/>
+        </insert>
+
+        <insert tableName="traffic_violation">
+            <column name="id" value="1"/>
+            <column name="date" valueNumeric="${twoHoursBefore}"/>
+            <column name="deleted" valueBoolean="false"/>
+            <column name="payment" value="1500"/>
+            <column name="points" value="10"/>
+            <column name="type" value="COLLISION"/>
+            <column name="person_id" value="1"/>
+            <column name="version" value="0"/>
+        </insert>
+
+        <insert tableName="traffic_violation">
+            <column name="id" value="2"/>
+            <column name="date" valueNumeric="${threeHoursBefore}"/>
+            <column name="deleted" valueBoolean="false"/>
+            <column name="payment" value="500"/>
+            <column name="points" value="6"/>
+            <column name="type" value="HIGH_SPEED"/>
+            <column name="person_id" value="2"/>
+            <column name="version" value="0"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="22062022-002" author="filip" runOnChange="true">
+        <insert tableName="authorities">
+            <column name="username" value="user"/>
+            <column name="authority" value="ROLE_USER"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="username" value="user"/>
+            <column name="password" value="{bcrypt}$2a$10$TLrQKxtVBgKZXeuh7G6Rre0Lf9lEmHERWPLhIMT2j9VaeuXlduJOm"/>
+            <column name="enabled" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="role">
+            <column name="id" value="1"/>
+            <column name="name" value="ROLE_USER"/>
+        </insert>
+
+        <insert tableName="user">
+            <column name="id" value="1"/>
+            <column name="password" value="$2a$10$EjZpQYRPN.fDiqnE4Jxf9eS3zAsHT5Km.2oipqiKi.7nJ0W3zbmBe"/>
+            <column name="username" value="user"/>
+        </insert>
+
+        <insert tableName="user_role">
+            <column name="role_id" value="1"/>
+            <column name="user_id" value="1"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
