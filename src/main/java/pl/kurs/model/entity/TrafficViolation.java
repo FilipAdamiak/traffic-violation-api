@@ -8,6 +8,7 @@ import pl.kurs.model.enums.ViolationType;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+
 @Entity
 @Getter
 @Setter
@@ -44,4 +45,6 @@ public class TrafficViolation {
     }
 
     public TrafficViolation(){}
+
+
 }

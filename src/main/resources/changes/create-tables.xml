@@ -76,7 +76,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="user">
+        <createTable tableName="authentication">
             <column name="id" autoIncrement="true" type="INT">
                 <constraints primaryKey="true"/>
             </column>
@@ -88,8 +88,8 @@
             </column>
         </createTable>
 
-        <createTable tableName="user_role">
-            <column name="user_id" type="INT">
+        <createTable tableName="authentication_role">
+            <column name="authentication_id" type="INT">
                 <constraints nullable="false"/>
             </column>
             <column name="role_id" type="INT">
@@ -97,32 +97,11 @@
             </column>
         </createTable>
 
-        <createTable tableName="users">
-            <column name="username" type="VARCHAR(64)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="password" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="enabled" type="BOOLEAN">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <createTable tableName="authorities">
-            <column name="username" type="VARCHAR(64)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="authority" type="VARCHAR(64)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="user_id"
-                                 constraintName="FK_USER_ROLE" referencedTableName="user"
+        <addForeignKeyConstraint baseTableName="authentication_role" baseColumnNames="authentication_id"
+                                 constraintName="FK_AUTHENTICATION_ROLE" referencedTableName="authentication"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_id"
-                                 constraintName="FK_ROLE_USER" referencedTableName="role"
+        <addForeignKeyConstraint baseTableName="authentication_role" baseColumnNames="role_id"
+                                 constraintName="FK_ROLE_AUTHENTICATION" referencedTableName="role"
                                  referencedColumnNames="id"/>
 
     </changeSet>

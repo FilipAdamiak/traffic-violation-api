@@ -1,6 +1,7 @@
 package pl.kurs.config.security.model;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,9 +11,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@Table(name = "user")
+@Setter
 @Entity
-public class User implements UserDetails {
+@Table(name = "authentication")
+public class AuthenticationRequest implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -21,17 +23,17 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_role",
-            joinColumns = {@JoinColumn(name = "user_id")},
+    @JoinTable(name = "authentication_role",
+            joinColumns = {@JoinColumn(name = "authentication_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String password) {
+    public AuthenticationRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public User(){}
+    public AuthenticationRequest(){}
 
     public void addRole(Role role) {
         roles.add(role);

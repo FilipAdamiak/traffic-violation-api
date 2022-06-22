@@ -13,6 +13,7 @@ import pl.kurs.model.command.CreateViolationCommand;
 import pl.kurs.model.command.UpdateViolationCommand;
 import pl.kurs.model.dto.ViolationDto;
 import pl.kurs.model.entity.TrafficViolation;
+import pl.kurs.model.searchcriteria.SearchViolationCriteria;
 import pl.kurs.service.ViolationService;
 
 import javax.validation.Valid;
@@ -36,6 +37,12 @@ public class ViolationController {
     public ResponseEntity<ViolationDto> getSingleViolation(@PathVariable int id) {
         TrafficViolation violation = violationService.findById(id);
         return new ResponseEntity(modelMapper.map(violation, ViolationDto.class), HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<ViolationDto>> searchShape(@PageableDefault Pageable pageable, @RequestBody @Valid SearchViolationCriteria search) {
+        return ResponseEntity.ok(violationService.findWithPredicate(pageable, search)
+                .map(s -> modelMapper.map(s, ViolationDto.class)));
     }
 
     @PostMapping

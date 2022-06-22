@@ -5,13 +5,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import pl.kurs.repository.UserRepository;
+import pl.kurs.repository.AuthenticationRepository;
 
 @Service
 @RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
 
-    private final UserRepository repository;
+    private final AuthenticationRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

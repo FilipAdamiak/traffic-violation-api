@@ -12,6 +12,7 @@ import pl.kurs.mail.EmailService;
 import pl.kurs.model.command.CreateViolationCommand;
 import pl.kurs.model.command.UpdateViolationCommand;
 import pl.kurs.model.entity.TrafficViolation;
+import pl.kurs.model.searchcriteria.SearchViolationCriteria;
 import pl.kurs.repository.PersonRepository;
 import pl.kurs.repository.ViolationRepository;
 
@@ -27,6 +28,10 @@ public class ViolationService {
     private final PersonRepository personRepository;
     private final EmailService emailService;
 
+    @Transactional
+    public Page<TrafficViolation> findWithPredicate(Pageable pageable, SearchViolationCriteria criteria) {
+        return violationRepository.findAll(criteria.toPredicate(), pageable);
+    }
 
     @Transactional(readOnly = true)
     public Page<TrafficViolation> findAll(Pageable pageable) {

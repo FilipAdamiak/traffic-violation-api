@@ -59,31 +59,20 @@
 
 
     <changeSet id="22062022-002" author="filip" runOnChange="true">
-        <insert tableName="authorities">
-            <column name="username" value="user"/>
-            <column name="authority" value="ROLE_USER"/>
-        </insert>
-
-        <insert tableName="users">
-            <column name="username" value="user"/>
-            <column name="password" value="{bcrypt}$2a$10$TLrQKxtVBgKZXeuh7G6Rre0Lf9lEmHERWPLhIMT2j9VaeuXlduJOm"/>
-            <column name="enabled" valueBoolean="true"/>
-        </insert>
-
         <insert tableName="role">
             <column name="id" value="1"/>
             <column name="name" value="ROLE_USER"/>
         </insert>
 
-        <insert tableName="user">
+        <insert tableName="authentication">
             <column name="id" value="1"/>
-            <column name="password" value="$2a$10$EjZpQYRPN.fDiqnE4Jxf9eS3zAsHT5Km.2oipqiKi.7nJ0W3zbmBe"/>
+            <column name="password" value="$2a$10$VS66C.zHbt.Yg552Bza3K.89il0GcgSrR7END5WQVpgVlXTSQTx1m"/>
             <column name="username" value="user"/>
         </insert>
 
-        <insert tableName="user_role">
+        <insert tableName="authentication_role">
             <column name="role_id" value="1"/>
-            <column name="user_id" value="1"/>
+            <column name="authentication_id" value="1"/>
         </insert>
     </changeSet>
 
