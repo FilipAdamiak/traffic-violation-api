@@ -2,6 +2,7 @@ package pl.kurs.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -13,7 +14,7 @@ import pl.kurs.repository.PersonRepository;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PersonServiceTest {
 
@@ -28,28 +29,35 @@ class PersonServiceTest {
     void init() {
         MockitoAnnotations.openMocks(this);
         personService = new PersonService(personRepository);
-         person1 = Person.builder()
-                .pesel("01292009610")
+        person1 = Person.builder()
+                .pesel("03292009610")
                 .name("Adam")
                 .surname("Graczyk")
                 .email("moderntoking7@gmail.com")
-                .isLicenseSuspended(false)
+                .licenseSuspended(false)
                 .build();
     }
 
     @Test
     void shouldAddPerson() {
-        CreatePersonCommand command = CreatePersonCommand.builder()
-                .pesel("01292009610")
+        Person person = Person.builder()
+                .pesel("03292009610")
                 .name("Adam")
                 .surname("Graczyk")
                 .email("moderntoking7@gmail.com")
-                .isLicenseSuspended(false)
+                .licenseSuspended(false)
                 .build();
-        Mockito.when(personRepository.saveAndFlush(person1))
-                .thenReturn(person1);
+        CreatePersonCommand command = CreatePersonCommand.builder()
+                .pesel("03292009610")
+                .name("Adam")
+                .surname("Graczyk")
+                .email("moderntoking7@gmail.com")
+                .licenseSuspended(false)
+                .build();
+        Mockito.when(personRepository.saveAndFlush(person))
+                .thenReturn(person);
         personService.createPerson(command);
-        Mockito.verify(personRepository).saveAndFlush(person1);
+        Mockito.verify(personRepository).saveAndFlush(person);
     }
 
     @Test
@@ -67,15 +75,15 @@ class PersonServiceTest {
                 .name("Michal")
                 .surname("Pawelec")
                 .email("moderntoking7@gmail.com")
-                .isLicenseSuspended(true)
+                .licenseSuspended(true)
                 .version(0)
                 .build();
         Person afterUpdate = Person.builder()
-                .pesel("01292009610")
+                .pesel("03292009610")
                 .name("Michal")
                 .surname("Pawelec")
                 .email("moderntoking7@gmail.com")
-                .isLicenseSuspended(true)
+                .licenseSuspended(true)
                 .build();
         Mockito.when(personRepository.saveAndFlush(person1))
                 .thenReturn(afterUpdate);

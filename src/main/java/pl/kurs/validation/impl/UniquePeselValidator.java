@@ -1,13 +1,14 @@
 package pl.kurs.validation.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.kurs.repository.PersonRepository;
 import pl.kurs.validation.annotation.UniquePesel;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,8 @@ public class UniquePeselValidator implements ConstraintValidator<UniquePesel, St
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return  (!personRepository.existsByPesel(s)) && (s.length() == 11);
+        Pattern pattern = Pattern.compile("\\d{11}");
+        Matcher matcher = pattern.matcher(s);
+        return  (!personRepository.existsByPesel(s)) && matcher.matches();
     }
 }

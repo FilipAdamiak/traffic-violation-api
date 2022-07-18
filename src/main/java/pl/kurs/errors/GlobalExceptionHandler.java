@@ -7,7 +7,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.kurs.errors.constraints.ConstraintErrorHandler;
+import pl.kurs.model.enums.ViolationType;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -21,6 +23,17 @@ public class GlobalExceptionHandler {
     public GlobalExceptionHandler(Set<ConstraintErrorHandler> handlers) {
         this.constraintErrorHandlerMap = handlers.stream()
                 .collect(Collectors.toMap(ConstraintErrorHandler::constraintName, Function.identity()));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity handleConstraintViolationException(ConstraintViolationException e) {
+        return new ResponseEntity(
+                e.getConstraintViolations()
+                        .stream()
+                        .map(ce -> new ConstraintValidationError(e.getLocalizedMessage()))
+                        .collect(Collectors.toList()),
+                HttpStatus.UNPROCESSABLE_ENTITY
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -38,6 +51,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(
                 new NotFoundDto(e.getName(), e.getKey()),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ViolationAlreadyExistsException.class)
+    public ResponseEntity handleViolationAlreadyExistsException(ViolationAlreadyExistsException e) {
+        return new ResponseEntity(
+                new ViolationExistence(e.getViolationType(), e.getPayment(), e.getPoints()),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IncorrectPasswordException.class)
@@ -74,9 +94,21 @@ public class GlobalExceptionHandler {
     }
 
     @Value
+    class ViolationExistence {
+        ViolationType violationType;
+        int payment;
+        int points;
+    }
+
+    @Value
     class ValidationError {
         String error;
         String field;
+    }
+
+    @Value
+    class ConstraintValidationError {
+        String message;
     }
 
 }

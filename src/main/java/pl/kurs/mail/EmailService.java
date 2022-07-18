@@ -9,10 +9,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import pl.kurs.model.dto.ViolationToMailDto;
+import pl.kurs.model.dto.TicketToMailDto;
 import freemarker.template.Configuration;
-import pl.kurs.model.entity.TrafficViolation;
+import pl.kurs.model.dto.ViolationDto;
+import pl.kurs.model.entity.Ticket;
+import pl.kurs.model.entity.Violation;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -31,30 +32,32 @@ public class EmailService {
     private final ModelMapper modelMapper;
     private final Configuration configuration;
 
-    public String getEmailContent(ViolationToMailDto violation) throws IOException, TemplateException {
+    public String getEmailContent(TicketToMailDto ticket, ViolationDto violation) throws IOException, TemplateException {
         StringWriter writer = new StringWriter();
         Map<String, Object> model = new HashMap<>();
+        model.put("ticket", ticket);
         model.put("violation", violation);
         configuration.getTemplate("email.ftlh").process(model, writer);
         return writer.getBuffer().toString();
     }
 
     @Async
-    public void sendMail(TrafficViolation violation) throws TemplateException, IOException {
+    public void sendMail(Ticket ticket, Violation violation) throws TemplateException, IOException {
         try {
-            ViolationToMailDto dto = modelMapper.map(violation, ViolationToMailDto.class);
-            String emailContent = getEmailContent(dto);
+            TicketToMailDto ticketDto = modelMapper.map(ticket, TicketToMailDto.class);
+            ViolationDto violationDto = modelMapper.map(violation, ViolationDto.class);
+            String emailContent = getEmailContent(ticketDto, violationDto);
 
-            logger.info("Sending Email to {}", violation.getPerson().getEmail());
+            logger.info("Sending Email to {}", ticket.getPerson().getEmail());
 
             MimeMessage mimeMessage = sender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setText(emailContent, true);
-            mimeMessageHelper.setTo(violation.getPerson().getEmail());
+            mimeMessageHelper.setTo(ticket.getPerson().getEmail());
             mimeMessageHelper.setSubject("Warning about your driving license");
             sender.send(mimeMessage);
         } catch (MessagingException ex) {
-            logger.error("Failed to send email to {}", violation.getPerson().getEmail());
+            logger.error("Failed to send email to {}", ticket.getPerson().getEmail());
         }
     }
 

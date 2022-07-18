@@ -1,25 +1,18 @@
 package pl.kurs.service;
 
-import freemarker.template.TemplateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import pl.kurs.mail.EmailService;
 import pl.kurs.model.command.CreateViolationCommand;
-import pl.kurs.model.entity.Person;
-import pl.kurs.model.entity.TrafficViolation;
+import pl.kurs.model.command.UpdateViolationCommand;
+import pl.kurs.model.entity.Violation;
 import pl.kurs.model.enums.ViolationType;
-import pl.kurs.repository.PersonRepository;
 import pl.kurs.repository.ViolationRepository;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ViolationServiceTest {
 
@@ -27,57 +20,51 @@ class ViolationServiceTest {
     private ViolationService violationService;
     @Mock
     private ViolationRepository violationRepository;
-    @Mock
-    private PersonRepository personRepository;
-    @Mock
-    private EmailService emailService;
-    private TrafficViolation trafficViolation;
-    private Person person;
 
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
-        violationService = new ViolationService(violationRepository, personRepository, emailService);
-        person = Person.builder()
-                .pesel("01292009610")
-                .name("Adam")
-                .surname("Graczyk")
-                .email("moderntoking7@gmail.com")
-                .isLicenseSuspended(false)
-                .build();
-        trafficViolation = TrafficViolation.builder()
-                .date(LocalDateTime.of(2022, 6, 19, 20, 0, 0))
-                .payment(1500)
-                .points(10)
-                .person(person)
-                .type(ViolationType.COLLISION)
-                .build();
+        violationService = new ViolationService(violationRepository);
     }
 
     @Test
-    void shouldAddTrafficViolation() throws TemplateException, IOException {
+    void shouldAddViolation() {
+        Violation violation = new Violation(10, ViolationType.COLLISION, 1500);
         CreateViolationCommand command = CreateViolationCommand.builder()
-                .date(trafficViolation.getDate())
+                .type(ViolationType.COLLISION)
                 .payment(1500)
                 .points(10)
-                .personPesel("01292009610")
-                .type(ViolationType.COLLISION)
                 .build();
-        Mockito.when(personRepository.findByPesel("01292009610"))
-                .thenReturn(Optional.ofNullable(person));
-        Mockito.when(violationRepository.saveAndFlush(trafficViolation))
-                .thenReturn(trafficViolation);
+        Mockito.when(violationRepository.saveAndFlush(violation))
+                .thenReturn(violation);
         violationService.createViolation(command);
-        Mockito.verify(violationRepository).saveAndFlush(trafficViolation);
+        Mockito.verify(violationRepository).findByTypeAndPointsAndPayment(command.getType(), command.getPoints(), command.getPayment());
+        Mockito.verify(violationRepository).saveAndFlush(violation);
     }
 
     @Test
-    void shouldSoftDeleteTrafficViolation() {
+    void shouldDeleteViolation() {
+        Violation violation = new Violation(10, ViolationType.COLLISION, 1500);
         Mockito.when(violationRepository.findById(1))
-                .thenReturn(Optional.ofNullable(trafficViolation));
-        TrafficViolation violation = violationService.softDelete(1);
+                .thenReturn(Optional.of(violation));
+        violationService.deleteById(1);
         Mockito.verify(violationRepository).findById(1);
-        assertTrue(violation.isDeleted());
+        Mockito.verify(violationRepository).delete(violation);
+    }
+
+    @Test
+    void shouldEditViolation() {
+        Violation violation = new Violation(10, ViolationType.COLLISION, 1500);
+        UpdateViolationCommand command = UpdateViolationCommand.builder()
+                .type(ViolationType.TECHNICAL_CONDITION)
+                .payment(3000)
+                .points(8)
+                .build();
+        Violation afterUpdate = new Violation(8, ViolationType.TECHNICAL_CONDITION, 3000);
+        Mockito.when(violationRepository.saveAndFlush(afterUpdate))
+                .thenReturn(afterUpdate);
+        violationService.edit(violation, command);
+        Mockito.verify(violationRepository).findByTypeAndPointsAndPayment(command.getType(), command.getPoints(), command.getPayment());
     }
 
 }
