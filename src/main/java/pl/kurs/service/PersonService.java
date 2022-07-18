@@ -9,10 +9,7 @@ import pl.kurs.errors.EntityNotFoundException;
 import pl.kurs.model.command.CreatePersonCommand;
 import pl.kurs.model.command.UpdatePersonCommand;
 import pl.kurs.model.entity.Person;
-import pl.kurs.model.entity.TrafficViolation;
 import pl.kurs.repository.PersonRepository;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +29,7 @@ public class PersonService {
                 .surname(command.getSurname())
                 .email(command.getEmail())
                 .pesel(command.getPesel())
-                .isLicenseSuspended(command.isLicenseSuspended())
+                .licenseSuspended(command.isLicenseSuspended())
                 .build());
     }
 

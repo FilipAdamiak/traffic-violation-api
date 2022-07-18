@@ -10,16 +10,16 @@
     <property name="threeHoursBefore" value="now() - interval 3 hour" dbms="h2"/>
 
 
-    <changeSet id="21062022-002" author="filip" runOnChange="true">
+    <changeSet id="18-07-2022-003" author="filip" runOnChange="true">
 
         <insert tableName="person">
             <column name="id" value="1"/>
             <column name="name" value="Adam"/>
             <column name="surname" value="Kowalski"/>
-            <column name="email" value="adas123@gmail.com"/>
+            <column name="email" value="moderntoking7@gmail.com"/>
             <column name="version" value="0"/>
             <column name="deleted" valueBoolean="false"/>
-            <column name="is_license_suspended" valueBoolean="false"/>
+            <column name="license_suspended" valueBoolean="false"/>
             <column name="pesel" value="03262009610"/>
         </insert>
 
@@ -27,52 +27,89 @@
             <column name="id" value="2"/>
             <column name="name" value="Agnieszka"/>
             <column name="surname" value="Sobczak"/>
-            <column name="email" value="aga555@gmail.com"/>
+            <column name="email" value="as555@gmail.com"/>
             <column name="version" value="0"/>
             <column name="deleted" valueBoolean="false"/>
-            <column name="is_license_suspended" valueBoolean="true"/>
+            <column name="license_suspended" valueBoolean="true"/>
             <column name="pesel" value="02252009610"/>
         </insert>
 
-        <insert tableName="traffic_violation">
+        <insert tableName="ticket">
             <column name="id" value="1"/>
             <column name="date" valueNumeric="${twoHoursBefore}"/>
             <column name="deleted" valueBoolean="false"/>
-            <column name="payment" value="1500"/>
-            <column name="points" value="10"/>
-            <column name="type" value="COLLISION"/>
+            <column name="payed" valueBoolean="true"/>
+            <column name="series" value="AB"/>
             <column name="person_id" value="1"/>
             <column name="version" value="0"/>
         </insert>
 
-        <insert tableName="traffic_violation">
+        <insert tableName="ticket">
             <column name="id" value="2"/>
             <column name="date" valueNumeric="${threeHoursBefore}"/>
             <column name="deleted" valueBoolean="false"/>
-            <column name="payment" value="500"/>
-            <column name="points" value="6"/>
-            <column name="type" value="HIGH_SPEED"/>
+            <column name="payed" valueBoolean="false"/>
+            <column name="series" value="CD"/>
             <column name="person_id" value="2"/>
             <column name="version" value="0"/>
         </insert>
+
+        <insert tableName="violation">
+            <column name="id" value="1"/>
+            <column name="payment" value="2000"/>
+            <column name="points" value="8"/>
+            <column name="type" value="COLLISION"/>
+            <column name="ticket_id" value="1"/>
+        </insert>
+
+        <insert tableName="violation">
+            <column name="id" value="2"/>
+            <column name="payment" value="1600"/>
+            <column name="points" value="6"/>
+            <column name="type" value="COLLISION"/>
+            <column name="ticket_id" value="1"/>
+        </insert>
+
+        <insert tableName="violation">
+            <column name="id" value="3"/>
+            <column name="payment" value="1000"/>
+            <column name="points" value="8"/>
+            <column name="type" value="LIGHTS"/>
+            <column name="ticket_id" value="2"/>
+        </insert>
     </changeSet>
 
-
-    <changeSet id="22062022-002" author="filip" runOnChange="true">
+    <changeSet id="18-07-2022-004" author="filip" runOnChange="true">
         <insert tableName="role">
             <column name="id" value="1"/>
             <column name="name" value="ROLE_USER"/>
         </insert>
 
-        <insert tableName="authentication">
-            <column name="id" value="1"/>
-            <column name="password" value="$2a$10$VS66C.zHbt.Yg552Bza3K.89il0GcgSrR7END5WQVpgVlXTSQTx1m"/>
-            <column name="username" value="user"/>
+        <insert tableName="role">
+            <column name="id" value="2"/>
+            <column name="name" value="ROLE_ADMIN"/>
         </insert>
 
-        <insert tableName="authentication_role">
-            <column name="role_id" value="1"/>
-            <column name="authentication_id" value="1"/>
+        <insert tableName="app_user">
+            <column name="id" value="1"/>
+            <column name="password" value="$2a$10$BSBjoeBcXstjMJgAvAX3qu.mO2pmWscaGH0rLBSuIMswuYaayGw9e"/>
+            <column name="username" value="john"/>
+        </insert>
+
+        <insert tableName="app_user">
+            <column name="id" value="2"/>
+            <column name="password" value="$2a$10$z4KU5Rfx/Ph5D6iV9C71UOR7x8awiVupDGzO9r5LEZYM9Na9Y0H2C"/>
+            <column name="username" value="jim"/>
+        </insert>
+
+        <insert tableName="app_user_roles">
+            <column name="app_user_id" value="1"/>
+            <column name="roles_id" value="1"/>
+        </insert>
+
+        <insert tableName="app_user_roles">
+            <column name="app_user_id" value="2"/>
+            <column name="roles_id" value="2"/>
         </insert>
     </changeSet>
 

@@ -41,7 +41,7 @@ class PersonControllerTest {
                         .name("Adam")
                         .surname("Graczyk")
                         .email("moderntoking7@gmail.com")
-                        .isLicenseSuspended(false)
+                        .licenseSuspended(false)
                         .build());
         String content = postman.perform(MockMvcRequestBuilders.post("/people")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +73,7 @@ class PersonControllerTest {
                         .name("Ada")
                         .surname("Michalak")
                         .email("moderntoking7@gmail.com")
-                        .isLicenseSuspended(false)
+                        .licenseSuspended(false)
                         .build());
 
         postman.perform(MockMvcRequestBuilders.post("/people")
@@ -87,7 +87,7 @@ class PersonControllerTest {
                         .name("")
                         .surname("")
                         .email("moderntoking7@gmail.com")
-                        .isLicenseSuspended(false)
+                        .licenseSuspended(false)
                         .build());
 
         postman.perform(MockMvcRequestBuilders.post("/people")
@@ -107,7 +107,7 @@ class PersonControllerTest {
                         .name("Ada")
                         .surname("Michalak")
                         .email("moderntoking7@gmail.com")
-                        .isLicenseSuspended(false)
+                        .licenseSuspended(false)
                         .build());
 
         String saveContent = postman.perform(MockMvcRequestBuilders.post("/people")
@@ -148,7 +148,7 @@ class PersonControllerTest {
                         .name("Ada")
                         .surname("Michalak")
                         .email("moderntoking7@gmail.com")
-                        .isLicenseSuspended(false)
+                        .licenseSuspended(false)
                         .build());
 
         String saveContent = postman.perform(MockMvcRequestBuilders.post("/people")
@@ -166,7 +166,7 @@ class PersonControllerTest {
                         .name("Agnieszka")
                         .surname("Sobczak")
                         .email("aga123@gmail.com")
-                        .isLicenseSuspended(true)
+                        .licenseSuspended(true)
                         .version(0)
                         .build());
         postman.perform(MockMvcRequestBuilders.put("/people/" + personDto.getId())
@@ -189,7 +189,7 @@ class PersonControllerTest {
                         .name("Ada")
                         .surname("Michalak")
                         .email("moderntoking7@gmail.com")
-                        .isLicenseSuspended(false)
+                        .licenseSuspended(false)
                         .build());
 
         String saveContent = postman.perform(MockMvcRequestBuilders.post("/people")
@@ -207,7 +207,7 @@ class PersonControllerTest {
                         .name("")
                         .surname("")
                         .email("ag3@#%*gmail.com")
-                        .isLicenseSuspended(true)
+                        .licenseSuspended(true)
                         .version(null)
                         .build());
 

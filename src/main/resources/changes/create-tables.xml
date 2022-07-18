@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id="21062022-001" author="filip" runOnChange="true">
+    <changeSet id="18-07-2022-001" author="filip" runOnChange="true">
 
         <createTable tableName="person">
             <column name="id" autoIncrement="true" type="INT">
@@ -15,25 +15,25 @@
             <column name="deleted" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="email" type="VARCHAR(255)">
+            <column name="email" type="VARCHAR(64)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="UC_PERSON_EMAIL"/>
             </column>
-            <column name="is_license_suspended" type="BOOLEAN">
+            <column name="license_suspended" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="name" type="VARCHAR(255)">
+            <column name="name" type="VARCHAR(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="surname" type="VARCHAR(255)">
+            <column name="surname" type="VARCHAR(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="pesel" type="VARCHAR(255)">
+            <column name="pesel" type="VARCHAR(64)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="UC_PERSON_PESEL"/>
             </column>
             <column name="version" type="INT"/>
         </createTable>
 
-        <createTable tableName="traffic_violation">
+        <createTable tableName="ticket">
             <column name="id" autoIncrement="true" type="INT">
                 <constraints primaryKey="true"/>
             </column>
@@ -43,30 +43,49 @@
             <column name="deleted" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
+            <column name="payed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="series" type="varchar(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="person_id" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="version" type="INT"/>
+        </createTable>
+
+        <createTable tableName="violation">
+            <column name="id" autoIncrement="true" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
             <column name="payment" type="INT">
                 <constraints nullable="false"/>
             </column>
             <column name="points" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="person_id" type="INT">
+            <column name="type" type="VARCHAR(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="type" type="VARCHAR(255)">
-                <constraints nullable="false"/>
+            <column name="ticket_id" type="INT">
+                <constraints nullable="true"/>
             </column>
-            <column name="version" type="INT"/>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="traffic_violation" baseColumnNames="person_id" constraintName="fk_person_id"
+        <addForeignKeyConstraint baseTableName="ticket" baseColumnNames="person_id" constraintName="fk_person_id"
                                  referencedTableName="person"
                                  referencedColumnNames="id"
-                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+
+        <addForeignKeyConstraint baseTableName="violation" baseColumnNames="ticket_id" constraintName="fk_ticket_id"
+                                 referencedTableName="ticket"
+                                 referencedColumnNames="id"
                                  onUpdate="RESTRICT"/>
 
     </changeSet>
 
-    <changeSet id="22062022-001" author="filip" runOnChange="true">
+    <changeSet id="18-07-2022-002" author="filip" runOnChange="true">
         <createTable tableName="role">
             <column name="id" autoIncrement="true" type="INT">
                 <constraints primaryKey="true"/>
@@ -76,7 +95,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="authentication">
+        <createTable tableName="app_user">
             <column name="id" autoIncrement="true" type="INT">
                 <constraints primaryKey="true"/>
             </column>
@@ -88,20 +107,20 @@
             </column>
         </createTable>
 
-        <createTable tableName="authentication_role">
-            <column name="authentication_id" type="INT">
+        <createTable tableName="app_user_roles">
+            <column name="app_user_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="role_id" type="INT">
+            <column name="roles_id" type="INT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="authentication_role" baseColumnNames="authentication_id"
-                                 constraintName="FK_AUTHENTICATION_ROLE" referencedTableName="authentication"
+        <addForeignKeyConstraint baseTableName="app_user_roles" baseColumnNames="app_user_id"
+                                 constraintName="fk_user_role" referencedTableName="app_user"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="authentication_role" baseColumnNames="role_id"
-                                 constraintName="FK_ROLE_AUTHENTICATION" referencedTableName="role"
+        <addForeignKeyConstraint baseTableName="app_user_roles" baseColumnNames="roles_id"
+                                 constraintName="fk_role_user" referencedTableName="role"
                                  referencedColumnNames="id"/>
 
     </changeSet>

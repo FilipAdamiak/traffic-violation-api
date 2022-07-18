@@ -7,19 +7,21 @@
     <title>Warning about your driving license</title>
 </head>
 <body>
-<div>Hi, <b>${violation.personData}</b></div>
+<div>Hi, <b>${ticket.personData}</b></div>
 <br/>
 <div style="margin-top: 10px">You lost your driving license because of new traffic ticket:</div>
 <br/>
-<div>Date: <b>${violation.date}</b></div>
-<br/>
-<div>Points: <b>${violation.points}</b></div>
+<div>Date: <b>${ticket.date}</b></div>
 <br/>
 <div>Payment: <b>${violation.payment}</b></div>
 <br/>
+<div>Points: <b>${violation.points}</b></div>
+<br/>
 <div>Violation type: <b>${violation.type}</b></div>
 <br/>
-<div>Your total points in the previous year: <b>${violation.totalPoints}</b></div>
+<div>Your total points in the previous year: <b>${ticket.totalPoints}</b></div>
+<br/>
+<div>Your total payments in the previous year: <b>${ticket.totalPayment}</b></div>
 <br/>
 <div>You are obligated to pay the ticket in 7 days!</div>
 <br/>

@@ -19,8 +19,8 @@ public class UpdatePersonCommand {
     private String surname;
     @UniqueEmail
     private String email;
-    @NotNull(message = "VISIT_CONFIRMED_NULL")
-    private boolean isLicenseSuspended;
+    @NotNull(message = "LICENSE_SUSPENDED_NOT_NULL")
+    private boolean licenseSuspended;
     @NotNull(message = "VERSION_NOT_EMPTY")
     private Integer version;
 }

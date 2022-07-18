@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@EqualsAndHashCode(exclude = "trafficViolations")
+@EqualsAndHashCode(exclude = "tickets")
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "pesel", name = "UC_PERSON_PESEL"), @UniqueConstraint(columnNames = "email", name = "UC_PERSON_EMAIL")})
 @SQLDelete(sql = "UPDATE person SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
@@ -28,19 +28,19 @@ public class Person {
     private String surname;
     private String email;
     private boolean deleted;
-    private boolean isLicenseSuspended;
+    private boolean licenseSuspended;
     @OneToMany(mappedBy = "person", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private Set<TrafficViolation> trafficViolations = new HashSet<>();
+    private Set<Ticket> tickets = new HashSet<>();
     @Version
     private int version;
 
     @Builder
-    public Person(String pesel, String name, String surname, String email, boolean isLicenseSuspended) {
+    public Person(String pesel, String name, String surname, String email, boolean licenseSuspended) {
         this.pesel = pesel;
         this.name = name;
         this.surname = surname;
         this.email = email;
-        this.isLicenseSuspended = isLicenseSuspended;
+        this.licenseSuspended = licenseSuspended;
         this.deleted = false;
     }
 
@@ -51,7 +51,7 @@ public class Person {
         return "Mr/Mrs " + name + " " + surname;
     }
 
-    public void addViolation(TrafficViolation trafficViolation) {
-        trafficViolations.add(trafficViolation);
+    public void addTicket(Ticket ticket) {
+        tickets.add(ticket);
     }
 }

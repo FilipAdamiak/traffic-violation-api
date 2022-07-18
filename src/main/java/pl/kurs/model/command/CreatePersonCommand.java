@@ -23,6 +23,6 @@ public class CreatePersonCommand {
     @UniqueEmail
     private String email;
     @NotNull(message = "VISIT_CONFIRMED_EMPTY")
-    private boolean isLicenseSuspended;
+    private boolean licenseSuspended;
 
 }

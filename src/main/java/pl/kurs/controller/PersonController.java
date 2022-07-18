@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.kurs.model.command.CreatePersonCommand;
 import pl.kurs.model.command.UpdatePersonCommand;
 import pl.kurs.model.dto.PersonDto;
-import pl.kurs.model.dto.ViolationDto;
+import pl.kurs.model.dto.TicketDto;
 import pl.kurs.model.entity.Person;
-import pl.kurs.model.entity.TrafficViolation;
 import pl.kurs.service.PersonService;
 
 import javax.validation.Valid;
@@ -34,21 +33,12 @@ public class PersonController {
                 .map(person -> modelMapper.map(person, PersonDto.class)));
     }
 
-    @GetMapping("/{id}/points")
-    public ResponseEntity<Integer> getAllPoints(@PathVariable int id) {
-        return ResponseEntity.ok(personService.findById(id)
-                .getTrafficViolations()
-                .stream()
-                .mapToInt(TrafficViolation::getPoints)
-                .sum());
-    }
-
     @GetMapping("/{id}/violations")
-    public ResponseEntity<List<ViolationDto>> getPersonViolations(@PathVariable int id) {
+    public ResponseEntity<List<TicketDto>> getPersonViolations(@PathVariable int id) {
         return ResponseEntity.ok(personService.findById(id)
-                .getTrafficViolations()
+                .getTickets()
                 .stream()
-                .map(violation -> modelMapper.map(violation, ViolationDto.class))
+                .map(violation -> modelMapper.map(violation, TicketDto.class))
                 .collect(Collectors.toList()));
     }
 

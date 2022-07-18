@@ -1,60 +1,54 @@
 package pl.kurs.config.security.utils;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.auth0.jwt.JWT;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-import pl.kurs.config.security.model.JwtConfigurationProperties;
+import pl.kurs.config.security.model.AppUser;
+import pl.kurs.config.security.configuration.JwtConfigurationProperties;
+import pl.kurs.config.security.model.Role;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Getter
 public class JwtUtil {
 
     private final JwtConfigurationProperties properties;
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String generateAccessToken(HttpServletRequest request, User user) {
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + properties.getExpirationTime()))
+                .withIssuer(request.getRequestURL().toString())
+                .withClaim("roles", user.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .sign(properties.algorithm());
     }
 
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public String generateRefreshToken(HttpServletRequest request, User user) {
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + properties.getExpirationTime()))
+                .withIssuer(request.getRequestURL().toString())
+                .sign(properties.algorithm());
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    public String generateAccessTokenWithAppUser(HttpServletRequest request, AppUser user) {
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + properties.getExpirationTime()))
+                .withIssuer(request.getRequestURL().toString())
+                .withClaim("roles", user.getRoles()
+                        .stream()
+                        .map(Role::getName).collect(Collectors.toList()))
+                .sign(properties.algorithm());
     }
 
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(properties.getSecret()).parseClaimsJws(token).getBody();
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
-    }
-
-    private String createToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                //10h
-                .setExpiration(new Date(System.currentTimeMillis() + properties.getExpirationTime()))
-                .signWith(SignatureAlgorithm.HS256, properties.getSecret()).compact();
-    }
-
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
 }
